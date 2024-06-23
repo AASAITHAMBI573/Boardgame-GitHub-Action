@@ -11,14 +11,47 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
+        
     - name: Compile with Maven
       run: mvn compile 
+      
     - name: Test with Maven
       run: mvn test 
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: Boardgame
+        path: target/*.jar
+
+    - name: SonarQube Scan
+      uses: sonarsource/sonarqube-scan-action@master
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+    - name: Install jq
+      run: sudo apt-get update && sudo apt-get install -y jq
+
+    - name: SonarQube Quality Gate check
+      id: sonarqube-quality-gate-check
+      uses: sonarsource/sonarqube-quality-gate-action@master
+      # Force to fail step after specific time.
+      timeout-minutes: 5
+      env:
+       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+       SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        
+    - name: Trivy FS Scan
+      run: |
+        trivy fs --format table -o trivy-fs-report.html .
+
+    - name: Package with Maven
+      run: mvn clean package 
       
