@@ -24,7 +24,7 @@ jobs:
       
     - name: Test with Maven
       run: mvn test 
-
+      
     - name: SonarQube Scan
       uses: sonarsource/sonarqube-scan-action@master
       env:
