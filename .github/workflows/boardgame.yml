@@ -90,11 +90,11 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
-    - name: Kubectl Action
-      uses: tale/kubectl-action@v1
+    - name: Trigger deploy
+      uses: Consensys/kubernetes-action@master
       env:
-          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-    - run: |
+        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+        run: |
           kubectl apply -f deployment-service.yaml -n webapps
           kubectl get svc -n webapps
 
