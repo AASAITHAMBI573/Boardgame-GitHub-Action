@@ -53,5 +53,5 @@ jobs:
         trivy fs --format table -o trivy-fs-report.html .
 
     - name: Package with Maven
-      run: mvn clean package 
+      run: mvn clean package
       
