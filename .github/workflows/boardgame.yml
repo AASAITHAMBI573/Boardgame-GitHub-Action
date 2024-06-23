@@ -18,12 +18,19 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-        
-    - name: Compile with Maven
-      run: mvn compile 
-      
-    - name: Test with Maven
-      run: mvn test 
+    
+    - name: Package with Maven
+      run: mvn clean package   
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: Boardgame
+        path: target/*.jar
+
+    - name: Trivy FS Scan
+      run: |
+        trivy fs --format table -o trivy-fs-report.html .
+
       
     - name: SonarQube Scan
       uses: sonarsource/sonarqube-scan-action@master
@@ -43,18 +50,4 @@ jobs:
        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-    - name: Package with Maven
-      run: mvn clean package
-
-    - uses: actions/upload-artifact@v4
-      with:
-        name: Boardgame
-        path: target/*.jar
-        
-    - name: Trivy FS Scan
-      run: |
-        trivy fs --format table -o trivy-fs-report.html .
-
-    - name: Package with Maven
-      run: mvn clean package
       
