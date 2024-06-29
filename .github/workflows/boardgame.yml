@@ -52,6 +52,13 @@ jobs:
       with:
         name: Boardgame
         path: target/*.jar
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
     - name: Build Docker Image
       run: |
         docker build -t aasaithambi5/boardgame:latest .
@@ -81,3 +88,8 @@ jobs:
     - run: |
           kubectl apply -f deployment-service.yaml -n webapps
           kubectl get svc -n webapps
+
+          - uses: tale/kubectl-action@v1
+      with:
+        base64-kube-config: ${{ secrets.KUBE_CONFIG }}
+    - run: kubectl get pods
